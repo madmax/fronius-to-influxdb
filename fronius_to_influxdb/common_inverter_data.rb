@@ -26,7 +26,7 @@ class FroniusToInfluxdb
         udc_3: data.udc_3.value,
         year_energy:data.year_energy.value,
         day_energy: data.day_energy.value,
-      }.each_with_object({}) { |(key, value), hash| hash[key] = value || 0 }
+      }.each_with_object({}) { |(key, value), hash| hash[key] = value || 0.0 }
     end
   end
 end

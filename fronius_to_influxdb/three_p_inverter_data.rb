@@ -13,7 +13,7 @@ class FroniusToInfluxdb
         uac_l1: data.uac_l1.value,
         uac_l2: data.uac_l2.value,
         uac_l3: data.uac_l3.value
-      }.each_with_object({}) { |(key, value), hash| hash[key] = value || 0 }
+      }.each_with_object({}) { |(key, value), hash| hash[key] = value || 0.0 }
     end
   end
 end
