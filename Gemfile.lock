@@ -28,6 +28,7 @@ GEM
       faraday (~> 1.0)
     influxdb (0.8.1)
     multipart-post (2.1.1)
+    retriable (3.1.2)
     ruby2_keywords (0.0.5)
 
 PLATFORMS
@@ -37,6 +38,7 @@ DEPENDENCIES
   faraday
   faraday_middleware
   influxdb
+  retriable
 
 BUNDLED WITH
    2.1.4

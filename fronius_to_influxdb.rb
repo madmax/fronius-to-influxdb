@@ -3,6 +3,8 @@
 require "bundler"
 require "influxdb"
 require "ostruct"
+require "yaml"
+require "retriable"
 
 require_relative "fronius"
 require_relative "fronius_to_influxdb/three_p_inverter_data"
@@ -37,9 +39,14 @@ class FroniusToInfluxdb
     puts "measurement: #{measurement}, values: #{values}"
   end
 
-  def run
-    puts "Collecting fronius data..."
-    loop do
+  def on_retry
+    Proc.new do |exception, try, elapsed_time, next_interval|
+      puts "#{exception.class}: '#{exception.message}' - #{try} tries in #{elapsed_time} seconds and #{next_interval} seconds until the next try."
+    end
+  end
+
+  def collect
+    Retriable.retriable(tries: 5, base_interval: 10, on_retry: on_retry)  do
       common_inverter_data = self.common_inverter_data
       three_p_inverter_data = self.three_p_inverter_data
       device_status = common_inverter_data.device_status
@@ -49,7 +56,13 @@ class FroniusToInfluxdb
         write_point('three_p_inverter_data', three_p_inverter_data.to_write_point)
         write_point('device_status', device_status.to_write_point)
       end
+    end
+  end
 
+  def run
+    puts "Collecting fronius data..."
+    loop do
+      collect
       sleep config.interval
     end
   end

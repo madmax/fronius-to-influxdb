@@ -12,6 +12,7 @@ class Fronius
 
     def connection
       @connection ||= Faraday.new do |conn|
+        conn.options.timeout = 10
         conn.url_prefix = url
         conn.adapter :net_http
         conn.response :json

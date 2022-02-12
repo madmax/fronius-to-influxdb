@@ -1,0 +1,3 @@
+processes:
+  app:
+    max_respawns: 20
