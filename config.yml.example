@@ -1,0 +1,10 @@
+fronius:
+  url: http://192.168.1.26/solar_api/v1/
+
+influxdb:
+  username: root
+  password: password
+  database: fronius
+  host: 192.168.1.25
+
+interval: 10
