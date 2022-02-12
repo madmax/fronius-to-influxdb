@@ -2,7 +2,6 @@ require "bundler"
 require "faraday"
 require "faraday_middleware"
 require "json"
-require "pry"
 
 require_relative "fronius/value_with_unit"
 require_relative "fronius/device_status"
