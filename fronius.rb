@@ -27,6 +27,6 @@ class Fronius
   end
 
   def get_meter_realtime_data
-    @get_meter_realtime_data ||= GetMeterRealtimeData.fetch(api)
+    GetMeterRealtimeData.fetch(api)
   end
 end
