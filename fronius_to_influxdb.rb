@@ -1,10 +1,11 @@
 #!/usr/bin/env ruby
 
 require "bundler"
-require "influxdb"
+require "influxdb-client"
 require "ostruct"
 require "yaml"
 require "retriable"
+require "pry"
 
 require_relative "fronius"
 require_relative "fronius_to_influxdb/three_p_inverter_data"
@@ -21,10 +22,14 @@ class FroniusToInfluxdb
   end
 
   def influxdb
-    @influxdb ||= InfluxDB::Client.new config.influxdb.fetch("database"),
-      username: config.influxdb["username"],
-      password: config.influxdb["password"],
-      host: config.influxdb["host"]
+    @influxdb ||= InfluxDB2::Client.new config.influxdb.fetch("url"), config.influxdb.fetch("token"),
+      org: config.influxdb.fetch("org"),
+      bucket: config.influxdb.fetch("bucket"),
+      precision: InfluxDB2::WritePrecision::NANOSECOND
+  end
+
+  def influxdb_write_api
+    @influxdb_write_api ||= influxdb.create_write_api
   end
 
   def common_inverter_data
@@ -39,9 +44,9 @@ class FroniusToInfluxdb
     MeterRealtimeData.new fronius.get_meter_realtime_data
   end
 
-  def write_point(measurement, values)
-    influxdb.write_point(measurement, values: values)
-    puts "measurement: #{measurement}, values: #{values}"
+  def write_point(measurement, fields)
+    influxdb_write_api.write(data: { name: measurement, fields: fields })
+    puts "measurement: #{measurement}, values: #{fields}"
   end
 
   def on_retry
